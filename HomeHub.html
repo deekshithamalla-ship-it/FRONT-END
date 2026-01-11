@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeHub - Family Organizer</title>
+
+<style>
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f4f7;
+}
+
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+main {
+    padding: 20px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+h2 {
+    color: #333;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.card {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1 1 300px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+input, select, button {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0 15px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: gray;
+}
+
+.summary {
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>HomeHub</h1>
+    <p>Manage Family Tasks & Expenses</p>
+</header>
+
+<main>
+<div class="container">
+
+<!-- Tasks Section -->
+<div class="card">
+    <h2>Tasks</h2>
+    <input type="text" id="taskInput" placeholder="Enter task">
+    <select id="memberSelect">
+        <option value="Alice">Alice</option>
+        <option value="Bob">Bob</option>
+        <option value="Charlie">Charlie</option>
+    </select>
+    <button onclick="addTask()">Add Task</button>
+    <ul id="taskList"></ul>
+</div>
+
+<!-- Expenses Section -->
+<div class="card">
+    <h2>Expenses</h2>
+    <input type="text" id="expenseName" placeholder="Expense name">
+    <input type="number" id="expenseAmount" placeholder="Amount">
+    <button onclick="addExpense()">Add Expense</button>
+    <ul id="expenseList"></ul>
+    <div class="summary">
+        <strong>Total: $<span id="totalAmount">0</span></strong>
+    </div>
+</div>
+
+</div>
+</main>
+
+<script>
+// Task Management
+const taskList = document.getElementById('taskList');
+
+function addTask() {
+    const taskInput = document.getElementById('taskInput');
+    const memberSelect = document.getElementById('memberSelect');
+    const task = taskInput.value.trim();
+    const member = memberSelect.value;
+
+    if (task === '') return;
+
+    const li = document.createElement('li');
+    li.innerHTML = `
+        <span>${task} - <em>${member}</em></span>
+        <button onclick="toggleComplete(this)">✔</button>
+        <button onclick="deleteTask(this)">✖</button>
+    `;
+    taskList.appendChild(li);
+    taskInput.value = '';
+}
+
+function toggleComplete(btn) {
+    const li = btn.parentElement;
+    li.firstChild.classList.toggle('completed');
+}
+
+function deleteTask(btn) {
+    btn.parentElement.remove();
+}
+
+// Expense Management
+const expenseList = document.getElementById('expenseList');
+const totalAmountSpan = document.getElementById('totalAmount');
+let totalAmount = 0;
+
+function addExpense() {
+    const nameInput = document.getElementById('expenseName');
+    const amountInput = document.getElementById('expenseAmount');
+    const name = nameInput.value.trim();
+    const amount = parseFloat(amountInput.value);
+
+    if (name === '' || isNaN(amount)) return;
+
+    const li = document.createElement('li');
+    li.innerHTML = `
+        <span>${name}: $${amount.toFixed(2)}</span>
+        <button onclick="deleteExpense(this, ${amount})">✖</button>
+    `;
+    expenseList.appendChild(li);
+
+    totalAmount += amount;
+    totalAmountSpan.textContent = totalAmount.toFixed(2);
+
+    nameInput.value = '';
+    amountInput.value = '';
+}
+
+function deleteExpense(btn, amount) {
+    btn.parentElement.remove();
+    totalAmount -= amount;
+    totalAmountSpan.textContent = totalAmount.toFixed(2);
+}
+</script>
+
+</body>
+</html>
